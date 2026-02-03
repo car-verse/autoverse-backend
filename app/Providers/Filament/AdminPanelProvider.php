@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use Caresome\FilamentAuthDesigner\AuthDesignerPlugin;
+use Caresome\FilamentAuthDesigner\Data\AuthPageConfig;
+use Caresome\FilamentAuthDesigner\Enums\MediaPosition;
+use Caresome\FilamentAuthDesigner\View\AuthDesignerRenderHook;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,6 +32,35 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->plugins([
+                AuthDesignerPlugin::make()
+                    ->defaults(fn ($config) => $config
+                        ->media(asset('luke-schobert-niST2P59VWs-unsplash.jpg'))
+                        ->mediaPosition(MediaPosition::Left)
+                        ->mediaSize('70%')
+                    )
+                    ->login(fn ($config) => $config
+                        ->renderHook(
+                            AuthDesignerRenderHook::MediaOverlay, 
+                            fn () => view('auth.branding-overlay')
+                        )
+                    )
+                    ->registration(fn ($config) => $config
+                        ->renderHook(
+                            AuthDesignerRenderHook::MediaOverlay, 
+                            fn () => view('auth.branding-overlay')
+                        )
+                    )
+                    ->passwordReset(fn ($config) => $config
+                        ->renderHook(
+                            AuthDesignerRenderHook::MediaOverlay, 
+                            fn () => view('auth.branding-overlay')
+                        )
+                    )
+                    ->themeToggle()
+                    ->emailVerification()
+            ])
             ->colors([
                 'primary' => Color::Amber,
             ])
