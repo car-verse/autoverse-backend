@@ -1,0 +1,68 @@
+/* Scrollbar */
+html.fi {
+    scrollbar-gutter: auto;
+}
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+    transition: background-color var(--transition-fast);
+}
+*::-webkit-scrollbar-thumb:hover {
+    @apply !bg-[#1E40AF];
+}
+
+.fi-body {
+    @apply bg-white dark:bg-black;
+}
+
+.fi-simple-main {
+    @apply ring-0 shadow-none bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-300 dark:border-gray-700 relative before:absolute before:inset-1 before:rounded-[calc(var(--radius-2xl)-var(--spacing))] before:border before:bg-white dark:before:bg-gray-800 before:border-gray-300 dark:before:border-gray-700;
+}
+
+.fi-simple-page-content {
+    @apply relative z-10;
+}
+
+.fi-main-ctn {
+    @apply bg-gray-100 dark:bg-gray-900 h-[calc(100vh-4rem)] border-s border-t lg:rounded-ss-4xl border-gray-300 dark:border-gray-700 overflow-y-auto grid grid-rows-[auto_auto] justify-between sticky top-0;
+}
+
+.fi-body.fi-body-has-sidebar-fully-collapsible-on-desktop
+    .fi-main-ctn:not(.fi-main-ctn-sidebar-open) {
+    @apply rounded-ss-none;
+}
+
+.fi-body:not(.fi-body-has-topbar) .fi-main-ctn,
+.fi-body.fi-body-has-top-navigation .fi-main-ctn {
+    @apply rounded-ss-none;
+}
+
+.fi-main {
+    @apply block min-h-auto h-auto;
+}
+
+.fi-page-header-main-ctn .fi-header .fi-header-heading {
+    @apply relative inline-block after:content-[''] after:absolute after:-z-10 after:-left-1 after:-right-1 after:bottom-1 after:rounded-full after:bg-primary-400/75 dark:after:bg-primary-600/75 after:h-1.5;
+}
+
+.fi-global-search-results-ctn {
+    @apply rounded-2xl border-0;
+}
+
+.fi-global-search-result-group-header {
+    @apply bg-gray-100 dark:bg-gray-700 p-4;
+}
+
+.fi-global-search-result-group-results {
+    @apply bg-white dark:bg-gray-800;
+}
