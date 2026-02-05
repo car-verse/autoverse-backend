@@ -7,6 +7,7 @@ use App\Models\BrandTranslation;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CreateBrand extends CreateRecord
 {
@@ -19,12 +20,10 @@ class CreateBrand extends CreateRecord
     
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // Keep only non-translatable fields
         $cleanData = [];
         
         foreach ($data as $key => $value) {
-            // Skip translatable fields - they'll be handled by handleRecordCreation
-            if (!in_array($key, ['name', 'country_origin'])) {
+            if (!in_array($key, ['name'])) {
                 $cleanData[$key] = $value;
             }
         }
@@ -35,40 +34,39 @@ class CreateBrand extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         return DB::transaction(function () use ($data) {
-            // Get original form data with translations
             $formData = $this->form->getState();
-            
-            // Create the main brand record (only non-translatable fields)
+
             $brand = static::getModel()::create([
-                'website_url' => $data['website_url'] ?? null,
-                'is_active' => $data['is_active'] ?? true,
+                'website_url' => $formData['website_url'] ?? null,
+                'is_active' => (int) $formData['is_active'] ?? true,
+                'logo' => $formData['logo'] ?? null,
+                'founded' => (int) $formData['founded'] ?? null,
+                'popularity_score' => (int) $formData['popularity_score'] ?? 0,
+                'slug' => Str::slug($formData['name']['en']),
+                'country_origin' => $formData['country_origin'],
             ]);
             
-            // Define translatable fields
-            $translatableFields = ['name', 'country_origin'];
+            $translatableFields = ['name'];
             
-            // Create translation records for each locale
             foreach (['en', 'ar'] as $locale) {
                 $translationData = [];
                 
-                // Extract values for this locale from each translatable field
                 foreach ($translatableFields as $field) {
                     if (isset($formData[$field][$locale])) {
                         $translationData[$field] = $formData[$field][$locale];
                     }
                 }
+
                 
-                // Only create if we have translation data
                 if (!empty($translationData)) {
                     BrandTranslation::create([
-                        'brand_id' => $brand->id,        // 👈 Add this
-                        'locale' => $locale,              // 👈 Add this
-                        ...$translationData,              // 👈 Spread the rest
+                        'brand_id' => $brand->id,
+                        'locale' => $locale,
+                        ...$translationData,
                     ]);
                 }
             }
             
-            // Refresh to load translations
             $brand->refresh();
             
             return $brand;

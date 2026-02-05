@@ -33,18 +33,18 @@ class EditBrand extends EditRecord
     {
         $brand = $this->record;
         
-        // Start with non-translatable fields
         $formData = [
             'website_url' => $brand->website_url,
             'is_active' => $brand->is_active,
             'logo' => $brand->logo,
+            'founded' => $brand->founded,
+            'popularity_score' => $brand->popularity_score,
+            'country_origin' => $brand->country_origin,
         ];
         
-        // Load all translations
         $translations = BrandTranslation::where('brand_id', $brand->id)->get();
         
-        // Define translatable fields
-        $translatableFields = ['name', 'country_origin'];
+        $translatableFields = ['name'];
         
         // Transform from: [locale => [field => value]]
         // To: [field => [locale => value]]
@@ -62,11 +62,10 @@ class EditBrand extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        // Keep only non-translatable fields
         $cleanData = [];
         
         foreach ($data as $key => $value) {
-            if (!in_array($key, ['name', 'country_origin'])) {
+            if (!in_array($key, ['name'])) {
                 $cleanData[$key] = $value;
             }
         }
@@ -77,31 +76,28 @@ class EditBrand extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         return DB::transaction(function () use ($record, $data) {
-            // Get original form data with translations
             $formData = $this->form->getState();
             
-            // Update main brand record
             $record->update([
                 'website_url' => $data['website_url'] ?? null,
                 'is_active' => $data['is_active'] ?? true,
                 'logo' => $data['logo'] ?? null,
+                'founded' => (int) $formData['founded'] ?? null,
+                'popularity_score' => (int) $formData['popularity_score'] ?? 0,
+                'country_origin' => $formData['country_origin'],
             ]);
             
-            // Define translatable fields
-            $translatableFields = ['name', 'country_origin'];
+            $translatableFields = ['name'];
             
-            // Update or create translations for each locale
             foreach (['en', 'ar'] as $locale) {
                 $translationData = [];
                 
-                // Extract values for this locale from each translatable field
                 foreach ($translatableFields as $field) {
                     if (isset($formData[$field][$locale])) {
                         $translationData[$field] = $formData[$field][$locale];
                     }
                 }
                 
-                // Update or create translation
                 if (!empty($translationData)) {
                     BrandTranslation::updateOrCreate(
                         [
@@ -113,7 +109,6 @@ class EditBrand extends EditRecord
                 }
             }
             
-            // Refresh to load updated translations
             $record->refresh();
             
             return $record;

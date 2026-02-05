@@ -12,6 +12,5 @@ class BrandTranslation extends Model
         'brand_id',
         'locale',
         'name',
-        'country_origin',
     ];
 }

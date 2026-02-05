@@ -25,8 +25,8 @@ class BrandsTable
                 ImageColumn::make('logo')
                     ->label('Logo')
                     ->circular()
-                    ->width(40)
-                    ->height(40),
+                    ->disk('public')
+                    ->imageSize(60),
 
                 TextColumn::make('name')
                     ->label('Brand')
