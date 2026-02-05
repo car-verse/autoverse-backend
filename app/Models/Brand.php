@@ -15,9 +15,13 @@ class Brand extends Model implements TranslatableContract
         'website_url',
         'is_active',
         'logo',
+        'slug',
+        'founded',
+        'popularity_score',
+        'country_origin',
     ];
 
-    public $translatedAttributes = ['name', 'country_origin'];
+    public $translatedAttributes = ['name'];
 
     protected $casts = [
         'is_active' => 'boolean',
