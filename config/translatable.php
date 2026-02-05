@@ -12,7 +12,11 @@ return [
     */
     'locales' => [
         'en',
-        'ar',
+        'fr',
+        'es' => [
+            'MX', // mexican spanish
+            'CO', // colombian spanish
+        ],
     ],
 
     /*
@@ -39,7 +43,7 @@ return [
     | and never fallback to the translator one.
     |
     */
-    'locale' => 'en',
+    'locale' => null,
 
     /*
     |--------------------------------------------------------------------------

@@ -14,6 +14,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -22,6 +23,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use SolutionForest\FilamentTranslateField\FilamentTranslateFieldPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,6 +34,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->spa(hasPrefetching: true)
+            // ->unsavedChangesAlerts()
+            ->databaseTransactions()
+            // ->profile()
+            ->brandName('autoverse')
+            ->brandLogo(asset('autoverse-logo.png'))
+            ->favicon(asset('autoverse-favicon.png'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->plugins([
                 AuthDesignerPlugin::make()
@@ -59,10 +68,13 @@ class AdminPanelProvider extends PanelProvider
                         )
                     )
                     ->themeToggle()
-                    ->emailVerification()
+                    ->emailVerification(),
+
+                FilamentTranslateFieldPlugin::make()
+                    ->defaultLocales(['en', 'ar']),
             ])
             ->colors([
-                'primary' => Color::Amber,
+                'primary'   => '#3b82f6',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -85,6 +97,10 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->resourceCreatePageRedirect('index')
+            ->resourceEditPageRedirect('index')
+            ->maxContentWidth(Width::Full)
+            ->sidebarCollapsibleOnDesktop()
             ->authMiddleware([
                 Authenticate::class,
             ]);
