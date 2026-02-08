@@ -26,4 +26,19 @@ class Brand extends Model implements TranslatableContract
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    public function carModels()
+    {
+        return $this->hasMany(CarModel::class);
+    }
+
+    public function paintColors()
+    {
+        return $this->hasMany(PaintColor::class);
+    }
+
+    public function cars()
+    {
+        return $this->hasMany(Car::class);
+    }
 }
